@@ -18,6 +18,7 @@ class IntegrationTest extends TestCase
 
         $this->assertInternalType('string', $cert->certName());
         $this->assertInternalType('string', $cert->toString());
+        $this->assertInternalType('string', (string) $cert);
         $this->assertInstanceOf('DateTime', $cert->validTo());
         $this->assertInstanceOf('DateTime', $cert->validFrom());
     }
@@ -34,6 +35,7 @@ class IntegrationTest extends TestCase
         $rawCertFromFile = file_get_contents($certFileName);
 
         $this->assertEquals($rawCertFromFile, $cert->toString());
+        $this->assertEquals($rawCertFromFile, (string) $cert);
     }
 
     /**
