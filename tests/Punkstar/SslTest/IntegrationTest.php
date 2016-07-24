@@ -36,6 +36,16 @@ class IntegrationTest extends TestCase
         $this->assertEquals($rawCertFromFile, $cert->toString());
     }
 
+    /**
+     * @test
+     */
+    public function testUrlReading()
+    {
+        $reader = new Reader();
+        $cert = $reader->readFromUrl("https://google.com");
+        $this->assertInstanceOf("Punkstar\\Ssl\\Certificate", $cert);
+    }
+
     public function exampleCertsDataProvider()
     {
         $certs = glob(__DIR__ . "/../../../example_certs/*");
