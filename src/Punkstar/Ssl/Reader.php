@@ -21,13 +21,18 @@ class Reader
 
         return new Certificate($this->certResourceToString($certResource));
     }
-
+    
     /**
      * @param $file
      * @return Certificate
+     * @throws Exception
      */
     public function readFromFile($file)
     {
+        if (!file_exists($file)) {
+            throw new Exception(sprintf("File '%s' does not exist", $file), Exception::FILE_NOT_FOUND);
+        }
+
         return new Certificate(file_get_contents($file));
     }
 

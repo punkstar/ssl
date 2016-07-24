@@ -30,7 +30,7 @@ class Certificate
         $this->sanParser = $sanParser;
 
         $this->rawCert = $certificate;
-        $this->certData = openssl_x509_parse($this->rawCert);
+        $this->certData = $this->extractCertData($certificate);
         $this->sanParser = $sanParser;
     }
 
@@ -100,5 +100,16 @@ class Certificate
     public function __toString()
     {
         return $this->toString();
+    }
+
+    protected function extractCertData($certificate)
+    {
+        $parsedData = openssl_x509_parse($certificate);
+
+        if ($parsedData === false) {
+            throw new Exception("Unable to extract data from certificate.", Exception::MALFORMED_CERTIFICATE);
+        }
+
+        return $parsedData;
     }
 }
