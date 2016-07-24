@@ -1,4 +1,15 @@
 {
+    "name": "punkstar/ssl",
+    "description": "PHP library for reading and understanding SSL certificates.",
+    "license": "MIT",
+    "keywords": ["ssl"],
+
+    "authors": [{
+        "name": "Nick Jones",
+        "email": "nick@nicksays.co.uk",
+        "homepage": "http://www.nicksays.co.uk"
+    }],
+
     "require": {
         "php": ">=5.6",
         "lib-openssl": "*"
