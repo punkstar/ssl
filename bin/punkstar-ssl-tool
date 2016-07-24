@@ -21,6 +21,8 @@ $validFrom = $cert->validFrom();
 $validTo = $cert->validTo();
 $now = new DateTime('now');
 
+$certSubject = print_r($cert->subject(), true);
+$certIssuer = print_r($cert->issuer(), true);
 $certSans = print_r($cert->sans(), true);
 
 $isValid = ($validFrom <= $now && $validTo >= $now) ? 'Yes' : 'No';
@@ -33,6 +35,14 @@ Validity: From {$validFrom->format('r')} until {$validTo->format('r')}
 
 Is Valid? $isValid
 
+Subject:
+
+{$certSubject}
+
+Issuer:
+
+{$certIssuer}
+
 SANs:
 
 {$certSans}
@@ -42,3 +52,5 @@ Raw Certificate:
 $rawCert
 
 OUTPUT;
+
+//var_dump($cert);

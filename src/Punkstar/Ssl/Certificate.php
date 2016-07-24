@@ -65,6 +65,22 @@ class Certificate
     /**
      * @return array
      */
+    public function subject()
+    {
+        return $this->certData['subject'];
+    }
+
+    /**
+     * @return array
+     */
+    public function issuer()
+    {
+        return $this->certData['issuer'];
+    }
+
+    /**
+     * @return array
+     */
     public function sans()
     {
         return $this->sanParser->parse($this->certData['extensions']['subjectAltName']);
