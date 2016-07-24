@@ -23,6 +23,7 @@ class IntegrationTest extends TestCase
         $this->assertInstanceOf('DateTime', $cert->validFrom());
         $this->assertInternalType('array', $cert->subject());
         $this->assertInternalType('array', $cert->issuer());
+        $this->assertInternalType('array', $cert->sans());
     }
 
     /**
