@@ -1,0 +1,22 @@
+{
+    "require": {
+        "php": ">=5.6",
+        "lib-openssl": "*"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "^5"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Punkstar\\Ssl\\": "src/Punkstar/Ssl"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Punkstar\\SslTest\\": "tests/Punkstar/SslTest"
+        }
+    }
+}
