@@ -3,6 +3,7 @@
 namespace Punkstar\Ssl;
 
 use DateTime;
+use Punkstar\Ssl\Parser\SanParser;
 
 class Certificate
 {
@@ -10,14 +11,27 @@ class Certificate
     protected $certData;
 
     /**
+     * @var SanParser
+     */
+    protected $sanParser;
+
+    /**
      * Certificate constructor.
      *
      * @param string $certificate
+     * @param SanParser $sanParser
      */
-    public function __construct($certificate)
+    public function __construct($certificate, SanParser $sanParser = null)
     {
+        if ($sanParser === null) {
+            $sanParser = new SanParser();
+        }
+
+        $this->sanParser = $sanParser;
+
         $this->rawCert = $certificate;
         $this->certData = openssl_x509_parse($this->rawCert);
+        $this->sanParser = $sanParser;
     }
 
     /**
@@ -46,6 +60,14 @@ class Certificate
     public function certName()
     {
         return $this->certData['name'];
+    }
+
+    /**
+     * @return array
+     */
+    public function sans()
+    {
+        return $this->sanParser->parse($this->certData['extensions']['subjectAltName']);
     }
 
     /**

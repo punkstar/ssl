@@ -21,12 +21,21 @@ $validFrom = $cert->validFrom();
 $validTo = $cert->validTo();
 $now = new DateTime('now');
 
+$certSans = print_r($cert->sans(), true);
+
 $isValid = ($validFrom <= $now && $validTo >= $now) ? 'Yes' : 'No';
 
 echo <<<OUTPUT
+
 Name: $certName
+
 Validity: From {$validFrom->format('r')} until {$validTo->format('r')}
+
 Is Valid? $isValid
+
+SANs:
+
+{$certSans}
 
 Raw Certificate:
 
