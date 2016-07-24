@@ -10,6 +10,8 @@
         "homepage": "http://www.nicksays.co.uk"
     }],
 
+    "bin": ["bin/punkstar-ssl-tool"],
+
     "require": {
         "php": ">=5.6",
         "lib-openssl": "*"

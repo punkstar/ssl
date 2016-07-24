@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$arguments = $argv;
+
+if (count($arguments) != 2) {
+    printf("Error: Expected a single argument, the URL that you want to analyse.\n");
+    exit(1);
+}
+
+list($scriptName, $url) = $arguments;
+
+$reader = new \Punkstar\Ssl\Reader();
+$cert = $reader->readFromUrl($url);
+
+$rawCert = $cert->toString();
+$certName = $cert->certName();
+$validFrom = $cert->validFrom();
+$validTo = $cert->validTo();
+$now = new DateTime('now');
+
+$isValid = ($validFrom <= $now && $validTo >= $now) ? 'Yes' : 'No';
+
+echo <<<OUTPUT
+Name: $certName
+Validity: From {$validFrom->format('r')} until {$validTo->format('r')}
+Is Valid? $isValid
+
+Raw Certificate:
+
+$rawCert
+
+OUTPUT;

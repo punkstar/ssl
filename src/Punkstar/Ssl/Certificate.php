@@ -6,6 +6,7 @@ use DateTime;
 
 class Certificate
 {
+    protected $rawCert;
     protected $certData;
 
     /**
@@ -15,7 +16,8 @@ class Certificate
      */
     public function __construct($certificate)
     {
-        $this->certData = openssl_x509_parse($certificate);
+        $this->rawCert = $certificate;
+        $this->certData = openssl_x509_parse($this->rawCert);
     }
 
     /**
@@ -44,5 +46,21 @@ class Certificate
     public function certName()
     {
         return $this->certData['name'];
+    }
+
+    /**
+     * @return string
+     */
+    public function toString()
+    {
+        return $this->rawCert;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
     }
 }
