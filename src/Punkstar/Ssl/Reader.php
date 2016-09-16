@@ -14,6 +14,10 @@ class Reader
     {
         $urlHost = parse_url($url, PHP_URL_HOST);
 
+        if ($urlHost === null) {
+            $urlHost = $url;
+        }
+
         $streamContext = stream_context_create(array(
             "ssl" => array(
                 "capture_peer_cert" => TRUE,
