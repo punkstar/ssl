@@ -36,7 +36,7 @@ class Reader
 
             return new Certificate($this->certResourceToString($certResource));
         } else {
-            throw new Exception(sprintf("Unable to connect to %s", $urlHost));
+            throw new Exception(sprintf("Unable to connect to %s", $urlHost), Exception::CONNECTION_PROBLEM);
         }
     }
     
