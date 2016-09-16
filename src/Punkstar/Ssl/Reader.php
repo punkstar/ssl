@@ -8,6 +8,7 @@ class Reader
     /**
      * @param $url
      * @return Certificate
+     * @throws Exception
      */
     public function readFromUrl($url)
     {
@@ -21,12 +22,17 @@ class Reader
             )
         ));
 
-        $stream = stream_socket_client("ssl://" . $urlHost . ":443", $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $streamContext);
-        $streamParams = stream_context_get_params($stream);
+        $stream = @stream_socket_client("ssl://" . $urlHost . ":443", $errorNumber, $errorString, 30, STREAM_CLIENT_CONNECT, $streamContext);
 
-        $certResource = $streamParams['options']['ssl']['peer_certificate'];
+        if ($stream) {
+            $streamParams = stream_context_get_params($stream);
 
-        return new Certificate($this->certResourceToString($certResource));
+            $certResource = $streamParams['options']['ssl']['peer_certificate'];
+
+            return new Certificate($this->certResourceToString($certResource));
+        } else {
+            throw new Exception(sprintf("Unable to connect to %s", $urlHost));
+        }
     }
     
     /**
