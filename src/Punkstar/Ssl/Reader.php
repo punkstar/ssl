@@ -4,6 +4,7 @@ namespace Punkstar\Ssl;
 
 class Reader
 {
+    const CONNECTION_TIMEOUT = 30;
 
     /**
      * @param $url
@@ -26,7 +27,7 @@ class Reader
             )
         ));
 
-        $stream = @stream_socket_client("ssl://" . $urlHost . ":443", $errorNumber, $errorString, 30, STREAM_CLIENT_CONNECT, $streamContext);
+        $stream = @stream_socket_client("ssl://" . $urlHost . ":443", $errorNumber, $errorString, self::CONNECTION_TIMEOUT, STREAM_CLIENT_CONNECT, $streamContext);
 
         if ($stream) {
             $streamParams = stream_context_get_params($stream);
