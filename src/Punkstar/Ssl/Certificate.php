@@ -89,6 +89,14 @@ class Certificate
     /**
      * @return string
      */
+    public function signatureAlgorithm()
+    {
+        return $this->certData['signatureTypeSN'];
+    }
+
+    /**
+     * @return string
+     */
     public function toString()
     {
         return $this->rawCert;

@@ -20,6 +20,7 @@ $certName = $cert->certName();
 $validFrom = $cert->validFrom();
 $validTo = $cert->validTo();
 $now = new DateTime('now');
+$signatureAlgorithm = $cert->signatureAlgorithm();
 
 $certSubject = print_r($cert->subject(), true);
 $certIssuer = print_r($cert->issuer(), true);
@@ -46,6 +47,10 @@ Issuer:
 SANs:
 
 {$certSans}
+
+Signature algorithm:
+
+{$signatureAlgorithm}
 
 Raw Certificate:
 

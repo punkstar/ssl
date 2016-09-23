@@ -24,6 +24,7 @@ class IntegrationTest extends TestCase
         $this->assertInternalType('array', $cert->subject());
         $this->assertInternalType('array', $cert->issuer());
         $this->assertInternalType('array', $cert->sans());
+        $this->assertInternalType('string', $cert->signatureAlgorithm());
     }
 
     /**
