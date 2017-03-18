@@ -4,20 +4,31 @@ namespace Punkstar\Ssl;
 
 class Reader
 {
-    const CONNECTION_TIMEOUT = 30;
+    const DEFAULT_CONNECTION_TIMEOUT = 5;
+
+    const OPT_CONNECTION_TIMEOUT = 'connection_timeout';
 
     /**
+     * Connect to a URL and retrieve the SSL certificate.
+     *
+     * Available options:
+     *
+     *     - connection_timeout: Timeout when connection to the URL, specified in seconds.
+     *
      * @param $url
+     * @param array $options
      * @return Certificate
      * @throws Exception
      */
-    public function readFromUrl($url)
+    public function readFromUrl($url, $options = [])
     {
         $urlHost = parse_url($url, PHP_URL_HOST);
 
         if ($urlHost === null) {
             $urlHost = $url;
         }
+
+        $options = $this->prepareReadFromUrlOptions($options);
 
         $streamContext = stream_context_create(array(
             "ssl" => array(
@@ -27,7 +38,7 @@ class Reader
             )
         ));
 
-        $stream = @stream_socket_client("ssl://" . $urlHost . ":443", $errorNumber, $errorString, self::CONNECTION_TIMEOUT, STREAM_CLIENT_CONNECT, $streamContext);
+        $stream = @stream_socket_client("ssl://" . $urlHost . ":443", $errorNumber, $errorString, $options[self::OPT_CONNECTION_TIMEOUT], STREAM_CLIENT_CONNECT, $streamContext);
 
         if ($stream) {
             $streamParams = stream_context_get_params($stream);
@@ -65,5 +76,18 @@ class Reader
         openssl_x509_export($certResource, $output);
 
         return $output;
+    }
+
+    /**
+     * @param $options
+     * @return mixed
+     */
+    protected function prepareReadFromUrlOptions($options)
+    {
+        if (!isset($options[self::OPT_CONNECTION_TIMEOUT])) {
+            $options[self::OPT_CONNECTION_TIMEOUT] = self::DEFAULT_CONNECTION_TIMEOUT;
+        }
+
+        return $options;
     }
 }
