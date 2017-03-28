@@ -7,8 +7,8 @@ This is a library for easily reading and understanding SSL certificates using PH
 ## Installation
 
     composer require punkstar/ssl
-
-## Usage
+    
+## Usage
 
     $reader = new Reader();
     $certificate = $reader->readFromUrl("https://github.com");
