@@ -4,9 +4,19 @@ namespace Punkstar\Ssl;
 
 class Reader
 {
+    /**
+     * Default connection timeout in seconds.
+     */
     const DEFAULT_CONNECTION_TIMEOUT = 5;
+    
+    /**
+     * Default port on which to expect https.
+     */
     const DEFAULT_PORT = 443;
-
+    
+    /**
+     * Option Flag: Name of option for defining a connection timeout.
+     */
     const OPT_CONNECTION_TIMEOUT = 'connection_timeout';
 
     /**
@@ -21,7 +31,7 @@ class Reader
      * @return Certificate
      * @throws Exception
      */
-    public function readFromUrl($url, $options = [])
+    public function readFromUrl($url, array $options = []): Certificate
     {
         $urlHost = parse_url($url, PHP_URL_HOST);
 
@@ -35,18 +45,24 @@ class Reader
             $urlPort = self::DEFAULT_PORT;
         }
     
-    
         $options = $this->prepareReadFromUrlOptions($options);
 
         $streamContext = stream_context_create(array(
-            "ssl" => array(
-                "capture_peer_cert" => TRUE,
-                "verify_peer" => FALSE,
-                "verify_peer_name" => FALSE
+            'ssl' => array(
+                'capture_peer_cert' => TRUE,
+                'verify_peer'       => FALSE,
+                'verify_peer_name'  => FALSE
             )
         ));
 
-        $stream = @stream_socket_client("ssl://" . $urlHost . ":" . $urlPort, $errorNumber, $errorString, $options[self::OPT_CONNECTION_TIMEOUT], STREAM_CLIENT_CONNECT, $streamContext);
+        $stream = @stream_socket_client(
+            sprintf('ssl://%s:%d', $urlHost, $urlPort),
+            $errorNumber,
+            $errorString,
+            $options[self::OPT_CONNECTION_TIMEOUT],
+            STREAM_CLIENT_CONNECT,
+            $streamContext
+        );
 
         if ($stream) {
             $streamParams = stream_context_get_params($stream);
@@ -54,9 +70,12 @@ class Reader
             $certResource = $streamParams['options']['ssl']['peer_certificate'];
 
             return new Certificate($this->certResourceToString($certResource));
-        } else {
-            throw new Exception(sprintf("Unable to connect to %s:%d", $urlHost, $urlPort), Exception::CONNECTION_PROBLEM);
         }
+        
+        throw new Exception(
+            sprintf('Unable to connect to %s:%d', $urlHost, $urlPort),
+            Exception::CONNECTION_PROBLEM
+        );
     }
     
     /**
@@ -64,7 +83,7 @@ class Reader
      * @return Certificate
      * @throws Exception
      */
-    public function readFromFile($file)
+    public function readFromFile($file): Certificate
     {
         if (!file_exists($file)) {
             throw new Exception(sprintf("File '%s' does not exist", $file), Exception::FILE_NOT_FOUND);
@@ -77,7 +96,7 @@ class Reader
      * @param $certResource
      * @return string
      */
-    protected function certResourceToString($certResource)
+    protected function certResourceToString($certResource): string
     {
         $output = null;
 
@@ -88,9 +107,9 @@ class Reader
 
     /**
      * @param $options
-     * @return mixed
+     * @return array
      */
-    protected function prepareReadFromUrlOptions($options)
+    protected function prepareReadFromUrlOptions(array $options): array
     {
         if (!isset($options[self::OPT_CONNECTION_TIMEOUT])) {
             $options[self::OPT_CONNECTION_TIMEOUT] = self::DEFAULT_CONNECTION_TIMEOUT;

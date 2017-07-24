@@ -37,7 +37,7 @@ class Certificate
     /**
      * @return DateTime
      */
-    public function validFrom()
+    public function validFrom(): \DateTime
     {
         $date = new DateTime();
         $date->setTimestamp($this->certData['validFrom_time_t']);
@@ -47,7 +47,7 @@ class Certificate
     /**
      * @return DateTime
      */
-    public function validTo()
+    public function validTo(): \DateTime
     {
         $date = new DateTime();
         $date->setTimestamp($this->certData['validTo_time_t']);
@@ -57,7 +57,7 @@ class Certificate
     /**
      * @return string
      */
-    public function certName()
+    public function certName(): string
     {
         return $this->certData['name'];
     }
@@ -65,7 +65,7 @@ class Certificate
     /**
      * @return array
      */
-    public function subject()
+    public function subject(): array
     {
         return $this->certData['subject'];
     }
@@ -73,7 +73,7 @@ class Certificate
     /**
      * @return array
      */
-    public function issuer()
+    public function issuer(): array
     {
         return $this->certData['issuer'];
     }
@@ -81,7 +81,7 @@ class Certificate
     /**
      * @return array
      */
-    public function sans()
+    public function sans(): array
     {
         return $this->sanParser->parse($this->certData['extensions']['subjectAltName']);
     }
@@ -89,7 +89,7 @@ class Certificate
     /**
      * @return string
      */
-    public function signatureAlgorithm()
+    public function signatureAlgorithm(): string
     {
         return $this->certData['signatureTypeSN'];
     }
@@ -97,7 +97,7 @@ class Certificate
     /**
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return $this->rawCert;
     }
@@ -110,7 +110,7 @@ class Certificate
         return $this->toString();
     }
 
-    protected function extractCertData($certificate)
+    protected function extractCertData($certificate): array
     {
         $parsedData = openssl_x509_parse($certificate);
 

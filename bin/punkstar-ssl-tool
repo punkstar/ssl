@@ -1,12 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . "/../vendor/autoload.php";
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $arguments = $argv;
 
-if (count($arguments) != 2) {
-    printf("Error: Expected a single argument, the URL that you want to analyse.\n");
+if (count($arguments) !== 2) {
+    print("Error: Expected a single argument, the URL that you want to analyse.\n");
     exit(1);
 }
 
