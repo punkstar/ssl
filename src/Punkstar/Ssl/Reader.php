@@ -5,6 +5,7 @@ namespace Punkstar\Ssl;
 class Reader
 {
     const DEFAULT_CONNECTION_TIMEOUT = 5;
+    const DEFAULT_PORT = 443;
 
     const OPT_CONNECTION_TIMEOUT = 'connection_timeout';
 
@@ -27,7 +28,14 @@ class Reader
         if ($urlHost === null) {
             $urlHost = $url;
         }
-
+    
+        $urlPort = parse_url($url, PHP_URL_PORT);
+    
+        if ($urlPort === null) {
+            $urlPort = self::DEFAULT_PORT;
+        }
+    
+    
         $options = $this->prepareReadFromUrlOptions($options);
 
         $streamContext = stream_context_create(array(
@@ -38,7 +46,7 @@ class Reader
             )
         ));
 
-        $stream = @stream_socket_client("ssl://" . $urlHost . ":443", $errorNumber, $errorString, $options[self::OPT_CONNECTION_TIMEOUT], STREAM_CLIENT_CONNECT, $streamContext);
+        $stream = @stream_socket_client("ssl://" . $urlHost . ":" . $urlPort, $errorNumber, $errorString, $options[self::OPT_CONNECTION_TIMEOUT], STREAM_CLIENT_CONNECT, $streamContext);
 
         if ($stream) {
             $streamParams = stream_context_get_params($stream);
@@ -47,7 +55,7 @@ class Reader
 
             return new Certificate($this->certResourceToString($certResource));
         } else {
-            throw new Exception(sprintf("Unable to connect to %s", $urlHost), Exception::CONNECTION_PROBLEM);
+            throw new Exception(sprintf("Unable to connect to %s:%d", $urlHost, $urlPort), Exception::CONNECTION_PROBLEM);
         }
     }
     
