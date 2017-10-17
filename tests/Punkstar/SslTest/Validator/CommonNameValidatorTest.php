@@ -34,6 +34,19 @@ class CommonNameValidatorTest extends TestCase
     }
     
     /**
+     * @test
+     */
+    public function testWithPorts()
+    {
+        $validator = new CommonNameValidator($this->loadExampleCertificate('wildcard-google-com.crt'));
+        
+        $this->assertTrue($validator->isValid('www.google.com:443'));
+        $this->assertTrue($validator->isValid('google.com:443'));
+        $this->assertTrue($validator->isValid('secure.google.com:443'));
+        $this->assertFalse($validator->isValid('www.secure.google.com:443'));
+    }
+    
+    /**
      * @return Certificate
      */
     protected function loadExampleCertificate($fileName): Certificate

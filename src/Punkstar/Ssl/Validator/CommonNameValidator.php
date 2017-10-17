@@ -18,7 +18,13 @@ class CommonNameValidator
     
     public function isValid($domain) : bool
     {
-        foreach ($this->getNameVariations($domain) as $nameVariation) {
+        $hostname = parse_url($domain, PHP_URL_HOST);
+        
+        if (!$hostname) {
+            $hostname = $domain;
+        }
+        
+        foreach ($this->getNameVariations($hostname) as $nameVariation) {
             if (in_array($nameVariation, $this->getAllowedNames(), true)) {
                 return true;
             }
