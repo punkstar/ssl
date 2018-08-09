@@ -10,9 +10,13 @@ This is a library for easily reading and understanding SSL certificates using PH
     
 ## Usage
 
+    <?php
+    require_once __DIR__.'/vendor/autoload.php';
+    use Punkstar\Ssl\Reader;
+
     $reader = new Reader();
     $certificate = $reader->readFromUrl("https://github.com");
 
-    printf("Name: %s\n", $certificate->getCertName());
-    printf("Valid To: %s\n", $certificate->getValidTo()->format('r');
-    printf("Valid From: %s\n", $certificate->getValidFrom()->format('r');
+    printf("Name: %s\n", $certificate->certName());
+    printf("Valid To: %s\n", $certificate->validTo()->format('r'));
+    printf("Valid From: %s\n", $certificate->validFrom()->format('r')); 
