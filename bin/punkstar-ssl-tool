@@ -31,6 +31,7 @@ function renderCert(Certificate $cert)
     $certSans = print_r($cert->sans(), true);
     
     $isValid = ($validFrom <= $now && $validTo >= $now) ? 'Yes' : 'No';
+    $isTrusted = ($cert->trusted() ? 'Yes' : 'No');
     
     echo <<<OUTPUT
     
@@ -39,6 +40,8 @@ function renderCert(Certificate $cert)
     Validity: From {$validFrom->format('r')} until {$validTo->format('r')}
     
     Is Valid? $isValid
+    
+    Trusted? $isTrusted
     
     Subject:
     

@@ -4,6 +4,7 @@ namespace Punkstar\Ssl;
 
 use DateTime;
 use Punkstar\Ssl\Parser\SanParser;
+use Composer\CaBundle\CaBundle;
 
 class Certificate
 {
@@ -116,6 +117,16 @@ class Certificate
     public function chain(): array
     {
         return $this->chain;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function trusted(): bool
+    {
+        return openssl_x509_checkpurpose($this->toString(), X509_PURPOSE_ANY, [
+            CaBundle::getSystemCaRootBundlePath()
+        ]);
     }
 
     /**
