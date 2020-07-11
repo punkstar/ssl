@@ -13,8 +13,9 @@
     "bin": ["bin/punkstar-ssl-tool"],
 
     "require": {
-        "php": "^7.0",
-        "lib-openssl": "*"
+        "php": "^7.4",
+        "lib-openssl": "*",
+        "composer/ca-bundle": "^1.2"
     },
 
     "require-dev": {

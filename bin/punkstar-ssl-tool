@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use Punkstar\Ssl\Certificate;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $arguments = $argv;
@@ -15,47 +17,62 @@ list($scriptName, $url) = $arguments;
 $reader = new \Punkstar\Ssl\Reader();
 $cert = $reader->readFromUrl($url);
 
-$rawCert = $cert->toString();
-$certName = $cert->certName();
-$validFrom = $cert->validFrom();
-$validTo = $cert->validTo();
-$now = new DateTime('now');
-$signatureAlgorithm = $cert->signatureAlgorithm();
+function renderCert(Certificate $cert)
+{
+    $rawCert = $cert->toString();
+    $certName = $cert->certName();
+    $validFrom = $cert->validFrom();
+    $validTo = $cert->validTo();
+    $now = new DateTime('now');
+    $signatureAlgorithm = $cert->signatureAlgorithm();
+    
+    $certSubject = print_r($cert->subject(), true);
+    $certIssuer = print_r($cert->issuer(), true);
+    $certSans = print_r($cert->sans(), true);
+    
+    $isValid = ($validFrom <= $now && $validTo >= $now) ? 'Yes' : 'No';
+    
+    echo <<<OUTPUT
+    
+    Name: $certName
+    
+    Validity: From {$validFrom->format('r')} until {$validTo->format('r')}
+    
+    Is Valid? $isValid
+    
+    Subject:
+    
+    {$certSubject}
+    
+    Issuer:
+    
+    {$certIssuer}
+    
+    SANs:
+    
+    {$certSans}
+    
+    Signature algorithm:
+    
+    {$signatureAlgorithm}
 
-$certSubject = print_r($cert->subject(), true);
-$certIssuer = print_r($cert->issuer(), true);
-$certSans = print_r($cert->sans(), true);
+    Raw certificate:
 
-$isValid = ($validFrom <= $now && $validTo >= $now) ? 'Yes' : 'No';
+    {$rawCert}
+    
+    OUTPUT;
+}
 
-echo <<<OUTPUT
+renderCert($cert);
 
-Name: $certName
+foreach ($cert->chain() as $idx => $chainCert) {
+    $message = sprintf("Chain #%d", $idx);
 
-Validity: From {$validFrom->format('r')} until {$validTo->format('r')}
+    echo "\n\n";
+    echo str_repeat('=', strlen(trim($message)));
+    echo "\n" . $message . "\n";
+    echo str_repeat('=', strlen(trim($message)));
+    echo "\n\n";
 
-Is Valid? $isValid
-
-Subject:
-
-{$certSubject}
-
-Issuer:
-
-{$certIssuer}
-
-SANs:
-
-{$certSans}
-
-Signature algorithm:
-
-{$signatureAlgorithm}
-
-Raw Certificate:
-
-$rawCert
-
-OUTPUT;
-
-//var_dump($cert);
+    renderCert($chainCert);
+}

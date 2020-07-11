@@ -50,6 +50,7 @@ class Reader
         $streamContext = stream_context_create(array(
             'ssl' => array(
                 'capture_peer_cert' => TRUE,
+                'capture_peer_cert_chain' => TRUE,
                 'verify_peer'       => FALSE,
                 'verify_peer_name'  => FALSE
             )
@@ -69,7 +70,12 @@ class Reader
 
             $certResource = $streamParams['options']['ssl']['peer_certificate'];
 
-            return new Certificate($this->certResourceToString($certResource));
+            return new Certificate(
+                $this->certResourceToString($certResource),
+                array_map(function ($cert) {
+                    return $this->certResourceToString($cert);
+                }, array_slice($streamParams['options']['ssl']['peer_certificate_chain'] ?? [], 1))
+            );
         }
         
         throw new Exception(
@@ -89,7 +95,19 @@ class Reader
             throw new Exception(sprintf("File '%s' does not exist", $file), Exception::FILE_NOT_FOUND);
         }
 
-        return new Certificate(file_get_contents($file));
+        preg_match_all(
+            '/(-----BEGIN CERTIFICATE-----[\s\w+\/=]+-----END CERTIFICATE-----)/',
+            file_get_contents($file),
+            $matches
+        );
+
+        if (count($matches) === 0) {
+            throw new Exception(sprintf("File '%s' does not contain correctly formatted certificate(s)", $file), Exception::MALFORMED_CERTIFICATE);
+        }
+
+        list($certificates) = $matches;
+
+        return new Certificate(array_shift($certificates), $certificates);
     }
 
     /**

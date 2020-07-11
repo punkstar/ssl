@@ -16,12 +16,17 @@ class Certificate
     protected $sanParser;
 
     /**
+     * @var Certificate[]
+     */
+    protected $chain;
+
+    /**
      * Certificate constructor.
      *
      * @param string $certificate
      * @param SanParser $sanParser
      */
-    public function __construct($certificate, SanParser $sanParser = null)
+    public function __construct($certificate, $certificateChain = [], SanParser $sanParser = null)
     {
         if ($sanParser === null) {
             $sanParser = new SanParser();
@@ -31,6 +36,9 @@ class Certificate
 
         $this->rawCert = $certificate;
         $this->certData = $this->extractCertData($certificate);
+        $this->chain = array_map(function ($cert) use ($sanParser) {
+            return new Certificate($cert, [], $sanParser);
+        }, $certificateChain);
         $this->sanParser = $sanParser;
     }
 
@@ -57,9 +65,9 @@ class Certificate
     /**
      * @return string
      */
-    public function certName(): string
+    public function certName(): ?string
     {
-        return $this->certData['name'];
+        return $this->certData['name'] ?? null;
     }
 
     /**
@@ -67,7 +75,7 @@ class Certificate
      */
     public function subject(): array
     {
-        return $this->certData['subject'];
+        return $this->certData['subject'] ?? [];
     }
 
     /**
@@ -75,7 +83,7 @@ class Certificate
      */
     public function issuer(): array
     {
-        return $this->certData['issuer'];
+        return $this->certData['issuer'] ?? [];
     }
 
     /**
@@ -83,7 +91,7 @@ class Certificate
      */
     public function sans(): array
     {
-        return $this->sanParser->parse($this->certData['extensions']['subjectAltName']);
+        return $this->sanParser->parse($this->certData['extensions']['subjectAltName'] ?? '');
     }
 
     /**
@@ -92,6 +100,22 @@ class Certificate
     public function signatureAlgorithm(): string
     {
         return $this->certData['signatureTypeSN'];
+    }
+
+    /**
+     * @return string
+     */
+    public function publicKey(): string
+    {
+        return openssl_pkey_get_details(openssl_pkey_get_public($this->toString()))['key'];
+    }
+
+    /**
+     * @return Certificate[]
+     */
+    public function chain(): array
+    {
+        return $this->chain;
     }
 
     /**
@@ -108,6 +132,15 @@ class Certificate
     public function __toString()
     {
         return $this->toString();
+    }
+
+    /**
+     * @param Certificate $cert
+     * @return boolean
+     */
+    public function signedBy(Certificate $cert): bool
+    {
+        return openssl_x509_verify($this->toString(), $cert->publicKey()) === 1;
     }
 
     protected function extractCertData($certificate): array
