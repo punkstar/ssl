@@ -36,10 +36,10 @@ class IntegrationTest extends TestCase
         $reader = new Reader();
         $cert = $reader->readFromFile($certFileName);
 
-        $rawCertFromFile = file_get_contents($certFileName);
+        $rawCertFromFile = trim(file_get_contents($certFileName));
 
-        $this->assertEquals($rawCertFromFile, $cert->toString());
-        $this->assertEquals($rawCertFromFile, (string) $cert);
+        $this->assertEquals($rawCertFromFile, trim($cert->toString()));
+        $this->assertEquals($rawCertFromFile, trim((string) $cert));
     }
 
     /**
@@ -54,7 +54,7 @@ class IntegrationTest extends TestCase
 
     public function exampleCertsDataProvider()
     {
-        $certs = glob(__DIR__ . "/../../../example_certs/*");
+        $certs = glob(__DIR__ . "/../../../example_certs/*.crt");
         $dataProvider = [];
 
         foreach ($certs as $cert) {
