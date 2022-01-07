@@ -3,6 +3,7 @@
 namespace Punkstar\SslTest;
 
 use PHPUnit\Framework\TestCase;
+use Punkstar\Ssl\Exception;
 use Punkstar\Ssl\Reader;
 use VirtualFileSystem\FileSystem;
 
@@ -10,22 +11,24 @@ class ReaderTest extends TestCase
 {
     /**
      * @test
-     * @expectedException \Punkstar\Ssl\Exception
-     * @expectedExceptionCode 1001
      */
     public function testFileNotFound()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1001);
+
         $reader = new Reader();
         $reader->readFromFile("idontexist.tstst.stst.stst");
     }
 
     /**
      * @test
-     * @expectedException \Punkstar\Ssl\Exception
-     * @expectedExceptionCode 2001
      */
     public function testJunkCert()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(2001);
+
         $fs = new FileSystem();
         $fs->createFile("/junk.crt", "junk-content");
 

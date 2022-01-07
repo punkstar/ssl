@@ -80,7 +80,7 @@ class SanParserTest extends TestCase
         $sanParser = new SanParser();
         $result = $sanParser->parse($input);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(count($output), $result);
 
         foreach ($output as $outputItem) {
