@@ -16,15 +16,15 @@ class IntegrationTest extends TestCase
         $reader = new Reader();
         $cert = $reader->readFromFile($certFileName);
 
-        $this->assertInternalType('string', $cert->certName());
-        $this->assertInternalType('string', $cert->toString());
-        $this->assertInternalType('string', (string) $cert);
+        $this->assertIsString($cert->certName());
+        $this->assertIsString($cert->toString());
+        $this->assertIsString((string) $cert);
         $this->assertInstanceOf('DateTime', $cert->validTo());
         $this->assertInstanceOf('DateTime', $cert->validFrom());
-        $this->assertInternalType('array', $cert->subject());
-        $this->assertInternalType('array', $cert->issuer());
-        $this->assertInternalType('array', $cert->sans());
-        $this->assertInternalType('string', $cert->signatureAlgorithm());
+        $this->assertIsArray($cert->subject());
+        $this->assertIsArray($cert->issuer());
+        $this->assertIsArray($cert->sans());
+        $this->assertIsString($cert->signatureAlgorithm());
     }
 
     /**

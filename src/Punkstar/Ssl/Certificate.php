@@ -156,6 +156,10 @@ class Certificate
 
     protected function extractCertData($certificate): array
     {
+        if (null === $certificate) {
+            throw new Exception("Unable to extract data from certificate.", Exception::MALFORMED_CERTIFICATE);
+        }
+
         $parsedData = openssl_x509_parse($certificate);
 
         if ($parsedData === false) {
